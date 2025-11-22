@@ -17,7 +17,7 @@ export default (req, res) => {
                 } catch {}
             }
             res.sendStatus(404);
-        );
+		});
     } catch {
         res.sendStatus(400);
     }
