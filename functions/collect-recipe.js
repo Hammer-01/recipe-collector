@@ -5,25 +5,17 @@ export default (req, res) => {
         if (recipeUrl.protocol !== 'https:' && recipeUrl.protocol !== 'http:') throw 400;
         fetch(recipeUrl).then(r => r.text()).then(t => {
             let matches = t.matchAll(/<script [^>]*\btype=['"]?application\/ld\+json['"]?\b[^>]*>\s*({.+?})\s*<\/script>/gs);
-			let temp = 0;
             for (let [_, json] of matches) {
-				if (temp) {
-					res.status(404).send(json);
-					return;
-				}
-				// temp++;
                 try {
-                    let obj = JSON.parse(json.textContent);
+                    let obj = JSON.parse(json);
                     let recipe = findRecipe(obj);
                     if (recipe) {
                         res.status(200).send(recipe);
                         return;
                     }
-					
-                } catch {res.status(404).send('unable to parse'); return}
+                } catch {}
             }
             res.sendStatus(404);
-			// res.status(404).send(t);
 		});
     } catch {
         res.sendStatus(400);
