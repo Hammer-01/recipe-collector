@@ -4,7 +4,7 @@ export default (req, res) => {
         let recipeUrl = new URL(req.url.slice(req.url.indexOf('?') + 1));
         if (recipeUrl.protocol !== 'https:' && recipeUrl.protocol !== 'http:') throw 400;
         fetch(recipeUrl).then(r => r.text()).then(t => {
-            let matches = t.matchAll(/<script [^>]*\btype=['"]?application\/ld\+json['"]?\b[^>]*>\s*({.+?})\s*<\/script>/gs);
+            let matches = t.matchAll(/<script [^>]*\btype=['"]?application\/ld\+json['"]?\b[^>]*>\s*({.+?}|\[.+?\])\s*<\/script>/gs);
             for (let [_, json] of matches) {
                 try {
                     let obj = JSON.parse(json);
@@ -23,7 +23,15 @@ export default (req, res) => {
 }
 
 function findRecipe(obj) {
-    if (obj?.['@type'] === 'Recipe') {
+    if (Array.isArray(obj)) {
+        for (let o of obj) {
+            let recipe = findRecipe(o);
+            if (recipe) return recipe;
+        }
+        return null;
+    }
+    let type = obj?.['@type'];
+    if (type === 'Recipe' || (Array.isArray(type) && type.includes('Recipe'))) {
         return obj;
 	} else if (obj?.['@graph']) {
         for (let o of obj['@graph']) {
