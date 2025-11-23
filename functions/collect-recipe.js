@@ -16,7 +16,7 @@ export default (req, res) => {
                 } catch {}
             }
             // res.sendStatus(404);
-			res.status(404).send([...matches]);
+			res.status(404).send(t);
 		});
     } catch {
         res.sendStatus(400);
