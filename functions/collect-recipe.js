@@ -11,7 +11,7 @@ export default (req, res) => {
 					res.status(404).send(json);
 					return;
 				}
-				temp++;
+				// temp++;
                 try {
                     let obj = JSON.parse(json.textContent);
                     let recipe = findRecipe(obj);
@@ -20,9 +20,9 @@ export default (req, res) => {
                         return;
                     }
 					
-                } catch {}
+                } catch {res.status(404).send('unable to parse'); return}
             }
-            // res.sendStatus(404);
+            res.sendStatus(404);
 			// res.status(404).send(t);
 		});
     } catch {
