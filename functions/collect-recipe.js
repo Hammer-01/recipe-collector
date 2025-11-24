@@ -5,6 +5,8 @@ export default (req, res) => {
         if (recipeUrl.protocol !== 'https:' && recipeUrl.protocol !== 'http:') throw 400;
         fetch(recipeUrl).then(r => r.text()).then(t => {
             let matches = t.matchAll(/<script\s[^>]*\btype=['"]?application\/ld\+json['"]?\b[^>]*>\s*({.+?}|\[.+?\])\s*<\/script>/gs);
+			res.status(404).send([...matches]);
+			return;
             for (let [_, json] of matches) {
                 try {
                     let obj = JSON.parse(json);
