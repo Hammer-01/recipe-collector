@@ -3,10 +3,12 @@ export default (req, res) => {
         if (!req.url.includes('?')) throw 400;
         let recipeUrl = new URL(req.url.slice(req.url.indexOf('?') + 1));
         if (recipeUrl.protocol !== 'https:' && recipeUrl.protocol !== 'http:') throw 400;
-        fetch(recipeUrl, {headers: {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0"}}).then(r => r.text()).then(t => {
+        // release cycle = 4 weeks = 4 * 7 * 24 * 60 * 60 * 1000 = 2419200000 ms
+        let currentFirefoxVersion = Math.floor((Date.now() - new Date("2025-11-11")) / 2419200000) + 145;
+        fetch(recipeUrl, {
+            headers: {'User-Agent': `Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:${currentFirefoxVersion}.0) Gecko/20100101 Firefox/${currentFirefoxVersion}.0`}
+        }).then(r => r.text()).then(t => {
             let matches = t.matchAll(/<script\s[^>]*\btype=['"]?application\/ld\+json['"]?\b[^>]*>\s*({.+?}|\[.+?\])\s*<\/script>/gs);
-			res.status(404).send([t]);
-			return;
             for (let [_, json] of matches) {
                 try {
                     let obj = JSON.parse(json);
