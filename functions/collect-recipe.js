@@ -4,7 +4,7 @@ export default (req, res) => {
         let recipeUrl = new URL(req.url.slice(req.url.indexOf('?') + 1));
         if (recipeUrl.protocol !== 'https:' && recipeUrl.protocol !== 'http:') throw 400;
         fetch(recipeUrl).then(r => r.text()).then(t => {
-            let matches = t.matchAll(/<script [^>]*\btype=['"]?application\/ld\+json['"]?\b[^>]*>\s*({.+?}|\[.+?\])\s*<\/script>/gs);
+            let matches = t.matchAll(/<script\s[^>]*\btype=['"]?application\/ld\+json['"]?\b[^>]*>\s*({.+?}|\[.+?\])\s*<\/script>/gs);
             for (let [_, json] of matches) {
                 try {
                     let obj = JSON.parse(json);
