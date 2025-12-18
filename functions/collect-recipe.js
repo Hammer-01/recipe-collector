@@ -1,13 +1,15 @@
-export default (req, res) => {
+export default async (req, res) => {
     try {
-        if (!req.url.includes('?')) throw 400;
+        if (!req.url.includes('?')) throw "Bad request";
         let recipeUrl = new URL(req.url.slice(req.url.indexOf('?') + 1));
-        if (recipeUrl.protocol !== 'https:' && recipeUrl.protocol !== 'http:') throw 400;
+        if (recipeUrl.protocol !== 'https:' && recipeUrl.protocol !== 'http:') throw "URL must start with http: or https:";
         // release cycle = 4 weeks = 4 * 7 * 24 * 60 * 60 * 1000 = 2419200000 ms
         let currentFirefoxVersion = Math.floor((Date.now() - new Date("2025-11-11")) / 2419200000) + 145;
-        fetch(recipeUrl, {
+        await fetch(recipeUrl, {
             headers: {'User-Agent': `Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:${currentFirefoxVersion}.0) Gecko/20100101 Firefox/${currentFirefoxVersion}.0`}
-        }).then(r => r.text()).then(t => {
+        }).catch(() => {
+			throw "Unable to access given url";
+		}).then(r => r.text()).then(t => {
             let matches = t.matchAll(/<script\s[^>]*\btype=['"]?application\/ld\+json['"]?\b[^>]*>\s*({.+?}|\[.+?\])\s*<\/script>/gs);
             for (let [_, json] of matches) {
                 try {
@@ -19,10 +21,11 @@ export default (req, res) => {
                     }
                 } catch {}
             }
-            res.sendStatus(404);
+            res.status(404).send("Unable to find recipe on the given page");
 		});
-    } catch {
-        res.sendStatus(400);
+    } catch (err) {
+		if (err instanceof Error) err = err.message || err;
+        res.status(400).send(err);
     }
 }
 
