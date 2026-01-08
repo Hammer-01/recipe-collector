@@ -11,17 +11,17 @@ export default async (req, res) => {
 			extraHeaders['Cookie'] = 'n_regis=123456789';
 		}
         await fetch(recipeUrl, {
-            headers: {'User-Agent': `Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:${currentFirefoxVersion}.0) Gecko/20100101 Firefox/${currentFirefoxVersion}.0`, ...extraHeaders}
+            headers: {
+				'User-Agent': req.headers['user-agent'] || `Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:${currentFirefoxVersion}.0) Gecko/20100101 Firefox/${currentFirefoxVersion}.0`,
+				...extraHeaders
+			}
         }).catch(() => {
 			throw "Unable to access given url";
 		}).then(r => r.text()).then(t => {
-			// temp for debugging
-			res.status(404).send(t);
-			return;
             let matches = t.matchAll(/<script\s[^>]*\btype=['"]?application\/ld\+json['"]?\b[^>]*>\s*({.+?}|\[.+?\])\s*<\/script>/gs);
             for (let [_, json] of matches) {
                 try {
-                    let obj = JSON.parse(json);
+                    let obj = JSON.parse(json.replaceAll('\n', ''));
                     let recipe = findRecipe(obj);
                     if (recipe) {
                         res.status(200).send(recipe);
