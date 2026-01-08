@@ -7,6 +7,7 @@ export default async (req, res) => {
         let currentFirefoxVersion = Math.floor((Date.now() - new Date("2025-11-11")) / 2419200000) + 145;
 		let extraHeaders = {};
 		if (recipeUrl.hostname === 'www.kidspot.com.au') {
+			recipeUrl = 'https://tags.news.com.au/prod/newskey/generator.html?origin=' + encodeURIComponent(recipeUrl);
 			extraHeaders['Cookie'] = 'n_regis=123456789';
 		}
         await fetch(recipeUrl, {
