@@ -5,8 +5,12 @@ export default async (req, res) => {
         if (recipeUrl.protocol !== 'https:' && recipeUrl.protocol !== 'http:') throw "URL must start with http: or https:";
         // release cycle = 4 weeks = 4 * 7 * 24 * 60 * 60 * 1000 = 2419200000 ms
         let currentFirefoxVersion = Math.floor((Date.now() - new Date("2025-11-11")) / 2419200000) + 145;
+		let extraHeaders = {};
+		if (recipeUrl.hostname === 'www.kidspot.com.au') {
+			extraHeaders['Cookie'] = 'n_regis=123456789';
+		}
         await fetch(recipeUrl, {
-            headers: {'User-Agent': `Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:${currentFirefoxVersion}.0) Gecko/20100101 Firefox/${currentFirefoxVersion}.0`}
+            headers: {'User-Agent': `Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:${currentFirefoxVersion}.0) Gecko/20100101 Firefox/${currentFirefoxVersion}.0`, ...extraHeaders}
         }).catch(() => {
 			throw "Unable to access given url";
 		}).then(r => r.text()).then(t => {
