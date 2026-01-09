@@ -18,9 +18,6 @@ export default async (req, res) => {
         }).catch(() => {
 			throw "Unable to access given url";
 		}).then(r => r.text()).then(t => {
-			// temp for debugging
-			res.status(404).send(t);
-			return;
             let matches = t.matchAll(/<script\s[^>]*\btype=['"]?application\/ld\+json['"]?\b[^>]*>\s*({.+?}|\[.+?\])\s*<\/script>/gs);
             for (let [_, json] of matches) {
                 try {
@@ -30,7 +27,10 @@ export default async (req, res) => {
                         res.status(200).send(recipe);
                         return;
                     }
-                } catch {}
+                } catch {
+					res.status(404).send(json);
+					return;
+				}
             }
             res.status(404).send("Unable to find recipe on the given page");
 		});
