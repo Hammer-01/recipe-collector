@@ -21,7 +21,7 @@ export default async (req, res) => {
             let matches = t.matchAll(/<script\s[^>]*\btype=['"]?application\/ld\+json['"]?\b[^>]*>\s*({.+?}|\[.+?\])\s*<\/script>/gs);
             for (let [_, json] of matches) {
                 try {
-                    let obj = JSON.parse(json.replaceAll('\n', ''));
+                    let obj = JSON.parse(json.replaceAll('\r', '').replaceAll('\n', ''));
                     let recipe = findRecipe(obj);
                     if (recipe) {
                         res.status(200).send(recipe);
