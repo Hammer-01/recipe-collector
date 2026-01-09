@@ -27,10 +27,7 @@ export default async (req, res) => {
                         res.status(200).send(recipe);
                         return;
                     }
-                } catch {
-					res.status(404).send({json});
-					return;
-				}
+                } catch {}
             }
             res.status(404).send("Unable to find recipe on the given page");
 		});
