@@ -28,7 +28,7 @@ export default async (req, res) => {
                         return;
                     }
                 } catch {
-					res.status(404).send(json);
+					res.status(404).send(json.replaceAll('\n', ''));
 					return;
 				}
             }
