@@ -16,7 +16,7 @@ export default async (req, res) => {
             let currentFirefoxVersion = Math.floor((Date.now() - new Date("2025-11-11")) / 2419200000) + 145;
             headers['User-Agent'] = `Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:${currentFirefoxVersion}.0) Gecko/20100101 Firefox/${currentFirefoxVersion}.0`;
         }
-		debugProbe += ' => ' + headers['User-Agent];
+		debugProbe += ' => ' + headers['User-Agent'];
 		if (recipeUrl.hostname === 'www.kidspot.com.au') {
 			recipeUrl = 'https://tags.news.com.au/prod/newskey/generator.html?origin=' + encodeURIComponent(recipeUrl);
 			headers['Cookie'] = 'n_regis=123456789';
