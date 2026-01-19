@@ -4,9 +4,12 @@ export default async (req, res) => {
         let recipeUrl = new URL(req.url.slice(req.url.indexOf('?') + 1));
         if (recipeUrl.protocol !== 'https:' && recipeUrl.protocol !== 'http:') throw "URL must start with http: or https:";
         let headers = {};
+		let debugProbe = 'fallback';
         if (req.headers instanceof Headers && req.headers.has('User-Agent')) { // req instanceof Request
+			debugProbe = 'req.headers instanceof Headers => cloudflare';
             headers['User-Agent'] = req.headers.get('User-Agent');
         } else if (req.headers['user-agent']) { // req instanceof http.IncomingMessage
+			debugProbe = 'req.headers["user-agent"] => nhost';
             headers['User-Agent'] = req.headers['user-agent'];
         } else {
             // release cycle = 4 weeks = 4 * 7 * 24 * 60 * 60 * 1000 = 2419200000 ms
@@ -26,6 +29,7 @@ export default async (req, res) => {
                     let obj = JSON.parse(json.replaceAll('\r', '').replaceAll('\n', ''));
                     let recipe = findRecipe(obj);
                     if (recipe) {
+						recipe = {...recipe, debugProbe};
                         res.status(200).send(recipe);
                         return;
                     }
