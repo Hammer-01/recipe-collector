@@ -1,3 +1,1 @@
-import handleReq from "../../../collect-recipe.js";
-
-export default handleReq;
+export * from "../../../collect-recipe.js";
