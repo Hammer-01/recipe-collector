@@ -1,3 +1,6 @@
 import handleReq from "../../../collect-recipe.js";
 
-export default handleReq;
+
+export default async (req, res) => {
+    handleReq(req, res);
+}
