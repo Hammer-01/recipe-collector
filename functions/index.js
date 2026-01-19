@@ -1,4 +1,4 @@
-import handleReq from "functions/collect-recipe.js";
+import handleReq from "collect-recipe.js";
 
 export default {
   async fetch(request) {
