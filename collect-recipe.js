@@ -36,7 +36,7 @@ export default async (req, res) => {
                     }
                 } catch {}
             }
-            res.status(404).send("Unable to find recipe on the given page" + " - " + debugProbe);
+            res.status(404).send("Unable to find recipe on the given page" + " - " + debugProbe + '\n' + t);
 		});
     } catch (err) {
 		if (err instanceof Error) err = err.message || err;
