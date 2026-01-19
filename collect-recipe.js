@@ -3,19 +3,21 @@ export default async (req, res) => {
         if (!req.url.includes('?')) throw "Bad request";
         let recipeUrl = new URL(req.url.slice(req.url.indexOf('?') + 1));
         if (recipeUrl.protocol !== 'https:' && recipeUrl.protocol !== 'http:') throw "URL must start with http: or https:";
-        // release cycle = 4 weeks = 4 * 7 * 24 * 60 * 60 * 1000 = 2419200000 ms
-        let currentFirefoxVersion = Math.floor((Date.now() - new Date("2025-11-11")) / 2419200000) + 145;
-		let extraHeaders = {};
+        let headers = {};
+        if (req.headers instanceof Headers && req.headers.has('User-Agent')) { // req instanceof Request
+            headers['User-Agent'] = req.headers.get('User-Agent');
+        } else if (req.headers['user-agent']) { // req instanceof http.IncomingMessage
+            headers['User-Agent'] = req.headers['user-agent'];
+        } else {
+            // release cycle = 4 weeks = 4 * 7 * 24 * 60 * 60 * 1000 = 2419200000 ms
+            let currentFirefoxVersion = Math.floor((Date.now() - new Date("2025-11-11")) / 2419200000) + 145;
+            headers['User-Agent'] = `Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:${currentFirefoxVersion}.0) Gecko/20100101 Firefox/${currentFirefoxVersion}.0`;
+        }
 		if (recipeUrl.hostname === 'www.kidspot.com.au') {
 			recipeUrl = 'https://tags.news.com.au/prod/newskey/generator.html?origin=' + encodeURIComponent(recipeUrl);
-			extraHeaders['Cookie'] = 'n_regis=123456789';
+			headers['Cookie'] = 'n_regis=123456789';
 		}
-        await fetch(recipeUrl, {
-            headers: {
-				'User-Agent': req.headers['user-agent'] || `Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:${currentFirefoxVersion}.0) Gecko/20100101 Firefox/${currentFirefoxVersion}.0`,
-				...extraHeaders
-			}
-        }).catch(() => {
+        await fetch(recipeUrl, {headers}).catch(() => {
 			throw "Unable to access given url";
 		}).then(r => r.text()).then(t => {
             let matches = t.matchAll(/<script\s[^>]*\btype=['"]?application\/ld\+json['"]?\b[^>]*>\s*({.+?}|\[.+?\])\s*<\/script>/gs);
