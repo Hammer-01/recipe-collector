@@ -1,1 +1,1 @@
-export * from "../../../collect-recipe.js";
+export { default } from "../../../collect-recipe.js";
