@@ -1,9 +1,10 @@
 export default async (req, res) => {
     try {
+		res.setHeader('Access-Control-Allow-Origin', '*');
         if (!req.url.includes('?')) throw "Bad request";
         let recipeUrl = new URL(req.url.slice(req.url.indexOf('?') + 1));
         if (recipeUrl.protocol !== 'https:' && recipeUrl.protocol !== 'http:') throw "URL must start with http: or https:";
-        let headers = {'Access-Control-Allow-Origin': '*'};
+        let headers = {};
         if (req.headers instanceof Headers && req.headers.has('User-Agent')) { // req instanceof Request
             headers['User-Agent'] = req.headers.get('User-Agent');
         } else if (req.headers['user-agent']) { // req instanceof http.IncomingMessage
