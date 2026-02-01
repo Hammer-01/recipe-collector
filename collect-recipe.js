@@ -32,7 +32,7 @@ export default async (req, res) => {
                     }
                 } catch {}
             }
-            res.status(404).send(t); // "Unable to find recipe on the given page"
+            res.status(404).send("Unable to find recipe on the given page");
 		});
     } catch (err) {
 		if (err instanceof Error) err = err.message || err;
